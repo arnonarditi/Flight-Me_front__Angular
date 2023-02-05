@@ -1,0 +1,37 @@
+// BASE
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 400;
+  color: rgb(33 43 62);
+  line-height: 1.6;
+  letter-spacing: .03em;
+
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background-image: linear-gradient(to bottom right, rgb(209 222 255), rgb(49 154 255 / 72%));
+  .app-root {
+    min-height: 100vh;
+  }
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+  line-height: 1;
+  font-weight: 400;
+}
+
+button {
+  cursor: pointer;
+}

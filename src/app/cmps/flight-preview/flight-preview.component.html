@@ -1,0 +1,9 @@
+<section class="flight-preview flex align-center ">
+    <div class="wrapper1 flex column ">
+        <segment-preview *ngFor="let segment of flight.Segments" [segment]="segment" class="grow"></segment-preview>
+    </div>
+    
+    <div class="price-container flex align-center center">
+        <h2>{{flight.CurrencySymbol}}{{flight.AveragePrice}}</h2>
+    </div>
+</section>

@@ -1,0 +1,5 @@
+.flight-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(750px, 1fr));
+    gap: 16px;
+}

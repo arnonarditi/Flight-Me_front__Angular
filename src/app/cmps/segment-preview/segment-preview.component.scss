@@ -1,0 +1,82 @@
+.segment-preview {
+    padding: 8px;
+    padding-bottom: 8px;
+    border-inline-end: 1px solid rgb(189, 189, 189,50%);
+    // the overall section-no tracks
+    .wrapper1 {
+        height: 100px;
+        position: relative;
+        margin-bottom: 8px;
+
+        .initial-dest,
+        .final-dest {
+            >*:not(:last-child) {
+                margin-bottom: 12px;
+            }
+        }
+
+        .company{
+            position: absolute;
+            top: 14px;
+            left: 50%;
+            transform: translateX(-50%);
+
+        }
+
+        button{
+            position: absolute;
+            padding: 4px 8px;
+            border: 0;
+            border-radius: 2px;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-image: linear-gradient(to bottom right, rgb(255, 255, 255),  rgb(218, 218, 218));
+
+            &:hover { 
+                outline: 1px solid rgb(43 17 74 / 14%);
+            }
+        }
+    }
+
+    .line {
+        margin-inline: 26px;
+        width: 150px;
+        border: 1px solid rgb(189, 189, 189,50%);
+    }
+    .sm-line{
+      width: 50px;
+      border: 1px solid rgb(189, 189, 189,50%); 
+    }
+    .icon-wrapper{
+        width: 25px;
+        margin-inline-end: 2px;
+        display: flex;
+        align-items: center;
+        i{ 
+            color: rgb(51, 51, 51);
+        }
+    }
+
+    // track
+    .legs-container{
+        article{
+            display: grid;
+            grid-template-columns: 1.75fr 0.9fr 1.75fr 0.8fr 1fr;
+        }
+
+        article:not(:last-child){
+            border-bottom: 1px solid rgb(189, 189, 189,50%);
+            padding: 8px 0;
+        }
+        article:last-child{
+           padding-top: 8px;
+        }
+
+        .initial-dest,.final-dest{
+            >*:not(:last-child){
+                margin-bottom: 6px;
+            }
+        }
+    }  
+}

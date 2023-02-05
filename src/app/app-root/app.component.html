@@ -1,0 +1,8 @@
+<section class="main-app">
+  <app-header></app-header>
+
+  <main class="main-container">
+    <flight-filter [filterRanges]="filterRanges$|async"></flight-filter>
+    <flight-list [flights]="flights$|async"></flight-list>
+  </main>
+</section>

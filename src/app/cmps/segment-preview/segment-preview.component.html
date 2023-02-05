@@ -1,0 +1,50 @@
+<section *ngIf="segment" class="segment-preview grow flex column">
+
+    <section class="wrapper1 flex align-center center ">
+        <div class="initial-dest flex column">
+            <h3>Departure: <span>{{segment.Legs[0].DeparturePoint.AirportCode}}</span></h3>
+            <h5>At: <span>{{segment.Legs[0].DeparturePoint.DateTime|formatDate}}</span></h5>
+        </div>
+
+        <div class="line"></div>
+        <div class="final-dest flex column">
+            <h3>Arrival: <span>{{segment.Legs[segment.Legs.length-1].ArrivalPoint.AirportCode}}</span></h3>
+            <h5>At: <span>{{segment.Legs[segment.Legs.length-1].ArrivalPoint.DateTime|formatDate}}</span></h5>
+        </div>
+
+        <div class="company flex align-center">
+            <div class="icon-wrapper">
+                <i class="fa-solid fa-plane"></i>
+            </div>
+            {{segment!.ValidatingCarrier}}
+        </div>
+
+        <button (click)="toggleIsTrack()">Track</button>
+    </section>
+
+    <!-- Track section -->
+    <section *ngIf="isTrackOpen" class="legs-container flex column">
+
+        <article *ngFor="let leg of segment.Legs" class="flex align-center space-between">
+            <div class="initial-dest flex column">
+                <h5>Departure: <span>{{leg.DeparturePoint.AirportCode}}</span></h5>
+                <h5>At: <span>{{leg.DeparturePoint.DateTime|formatDate}}</span></h5>
+            </div>
+
+            <div class="sm-line"></div>
+            <div class="final-dest flex column">
+                <h5>Arrival: <span>{{leg.ArrivalPoint.AirportCode}}</span></h5>
+                <h5>At: <span>{{leg.ArrivalPoint.DateTime|formatDate}}</span></h5>
+            </div>
+
+            <div class="flex align-center">
+                <div class="icon-wrapper">
+                    <i class="fa-solid fa-plane"></i>
+                </div>
+                {{leg.AirlineCode}}
+            </div>
+
+            <h5>Flight#: {{leg.FlightNumber}}</h5>
+        </article>
+    </section>
+</section>

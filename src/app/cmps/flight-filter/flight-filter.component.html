@@ -1,0 +1,77 @@
+<section *ngIf="filterRanges" class="flight-filter flex column ">
+    <section class="row1 flex space-between">
+        <!-- Price range -->
+        <div class="sub1 wrapper flex column">
+            <div class="flex align-center">
+                <span>Min-Price:</span>
+                <span>${{minPrice.value}}</span>
+            </div>
+            <input [(ngModel)]="flightFilter.minPrice" #minPrice (change)="onSetPriceRange()" type="range"
+            [defaultValue]="filterRanges.minPrice"  [min]="filterRanges.minPrice" [max]="filterRanges.maxPrice">
+        </div>
+
+        <div class="sub1 wrapper flex column">
+            <div class="flex align-center">
+                <span>Max-Price:</span>
+                <span>${{maxPrice.value}}</span>
+            </div>
+            <input [(ngModel)]="flightFilter.maxPrice" #maxPrice (change)="onSetPriceRange()" type="range"
+                [min]="filterRanges.minPrice" [max]="filterRanges.maxPrice">
+        </div>
+        <!-- Companies + Stops filter -->
+        <div class="companies-filter flex column">
+            <div (click)="isCompsOpen=!isCompsOpen" class="txt-wrapper flex align-center">
+                <span  >Airline-Companies   </span>
+                <i class="fa-solid fa-sort-down"></i>
+            </div>
+               
+            <div *ngIf="isCompsOpen" class="companies-dropdown">
+                <div *ngFor="let comp of filterRanges.companies" class="company-row flex align-center">
+                    <input [checked]="flightFilter.companies.includes(comp)" type="checkbox"
+                        (input)="onToggleCompOpt($event,comp)">
+                    <span>{{comp}}</span>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="stops-filter flex column">
+            <div (click)="isStopsOpen=!isStopsOpen" class="txt-wrapper flex align-center">
+                <span  >Intermediate-Stops </span>
+                <i class="fa-solid fa-sort-down"></i>
+            </div>
+         
+            <div *ngIf="isStopsOpen" class="stops-dropdown">
+                <div *ngFor="let stop of filterRanges.stops" class="stop-row flex align-center">
+                    <input [checked]="flightFilter.stops.includes(stop)" type="checkbox"
+                        (input)="onToggleStopOpt($event,stop)">
+                    <span>{{stop|stops}}</span>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Paging -->
+    <section class="row2 flex align-center space-between">
+        <div class="paging-wrapper flex align-center">
+            <div class="btns-wrapper flex align-center">
+                <button [disabled]="!flightFilter.page"  (click)="setPage(-1)">
+                    <i class="fa-solid fa-chevron-left fa-md"></i>
+                </button>
+                <button [disabled]="flightFilter.page+1===((totalResults/flightFilter.pageSize)|ceil)"
+                    (click)="setPage(1)">
+                    <i class="fa-solid fa-chevron-right fa-md"></i>
+                </button>
+            </div>
+
+            <span class="paging-counter">{{flightFilter.page+1}} of {{(totalResults/flightFilter.pageSize)|ceil}}
+            </span>
+            <span class="results">Results({{totalResults}})</span>
+
+        </div>
+        <!-- select el for track pattern -->
+        <select #trackPattern (change)="onSelectPattern(trackPattern.value)">
+            <option>one-way</option>
+            <option>round-trip</option>
+        </select>
+    </section>
+</section>
