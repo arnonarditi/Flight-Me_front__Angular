@@ -1,5 +1,4 @@
-import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Component, OnInit, Input } from '@angular/core';
 import { FlightFilter, FilterRanges } from 'src/app/models/flight.model';
 import { FlightService } from 'src/app/services/flight.service';
 
@@ -12,26 +11,23 @@ import { FlightService } from 'src/app/services/flight.service';
 export class FlightFilterComponent implements OnInit {
   constructor(private flightService: FlightService,) { }
   @Input() filterRanges!: FilterRanges | null
-  @ViewChild('maxPrice', { static: false }) maxPrice!: ElementRef;
 
-  subscription!: Subscription
+  // subscription!: Subscription
   flightFilter!: FlightFilter
   totalResults!: number
 
   isStopsOpen: boolean = false
   isCompsOpen: boolean = false
 
-  ngAfterViewInit(): void {
-    console.log()
-  }
-
   ngOnInit(): void {
-    this.subscription = this.flightService.flightFilter$.subscribe(flightFilter => {
+
+    this.flightService.flightFilter$.subscribe(flightFilter => {
       this.flightFilter = flightFilter
     })
-    this.subscription = this.flightService.totalResults$.subscribe(res => {
+    this.flightService.totalResults$.subscribe(res => {
       this.totalResults = res
     })
+
   }
 
   // Filter handlers
@@ -42,15 +38,17 @@ export class FlightFilterComponent implements OnInit {
 
   setPage(diff: number) {
     this.flightFilter.page += diff
-    this.flightService.setFilter(this.flightFilter)
+    this.flightService.setPage(this.flightFilter)
   }
 
   onSelectPattern(value: string): void {
     if (value === 'one-way') this.flightFilter.isOW = true
     else this.flightFilter.isOW = false
 
-    this.flightFilter.page = 0
-    this.flightService.setFilter(this.flightFilter)
+    this.flightFilter = {
+      isOW: this.flightFilter.isOW, companies: [],   minPrice: 0, maxPrice: Infinity, stops: [], page: 0, pageSize: 24
+    }
+    this.flightService.setFilterAndLoad(this.flightFilter)
   }
 
   onToggleStopOpt(ev: Event, stop: number) {

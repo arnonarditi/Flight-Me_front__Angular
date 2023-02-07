@@ -29,7 +29,6 @@ import { StopsPipe } from './pipes/stops.pipe';
     BrowserModule,
     FormsModule,
     ReactiveFormsModule,
-    
   ],
   providers: [],
   bootstrap: [AppComponent]

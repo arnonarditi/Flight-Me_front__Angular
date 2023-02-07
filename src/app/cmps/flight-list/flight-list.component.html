@@ -1,3 +1,12 @@
 <section class="flight-list">
     <flight-preview *ngFor="let flight of flights" [flight]="flight"></flight-preview>
+
+    <!-- no results section -->
+    <div *ngIf="!flights?.length" class="no-results flex align-center center">
+        <div>
+            <h2>No results for the specified filter,</h2>
+            <br>
+            <h3>Try to change parameters.</h3>
+        </div>
+    </div>
 </section>

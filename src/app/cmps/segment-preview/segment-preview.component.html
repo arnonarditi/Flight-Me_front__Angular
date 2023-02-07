@@ -16,7 +16,7 @@
             <div class="icon-wrapper">
                 <i class="fa-solid fa-plane"></i>
             </div>
-            {{segment!.ValidatingCarrier}}
+            {{segment.ValidatingCarrier}}
         </div>
 
         <button (click)="toggleIsTrack()">Track</button>
@@ -24,7 +24,6 @@
 
     <!-- Track section -->
     <section *ngIf="isTrackOpen" class="legs-container flex column">
-
         <article *ngFor="let leg of segment.Legs" class="flex align-center space-between">
             <div class="initial-dest flex column">
                 <h5>Departure: <span>{{leg.DeparturePoint.AirportCode}}</span></h5>

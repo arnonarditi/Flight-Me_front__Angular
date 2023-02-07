@@ -7,6 +7,11 @@ import { Flight, FlightFilter, FilterRanges } from '../models/flight.model';
   providedIn: 'root'
 })
 export class FlightService {
+  // _baseFlights$ are the overall flights back from req
+  private _baseFlights$ = new BehaviorSubject<Flight[]>([])
+  // _filteredFlights$ are the filteredFlights
+  private _filteredFlights$ = new BehaviorSubject<Flight[]>([])
+  // _flights$ are the filteredFlights and sliced by page state
   private _flights$ = new BehaviorSubject<Flight[]>([])
   public flights$ = this._flights$.asObservable()
 
@@ -16,7 +21,7 @@ export class FlightService {
   private _filterRanges$ = new BehaviorSubject<FilterRanges>({ companies: [], minPrice: Infinity, maxPrice: -Infinity, stops: [] })
   public filterRanges$ = this._filterRanges$.asObservable()
 
-  private _totalResults$ = new BehaviorSubject<number>(200)
+  private _totalResults$ = new BehaviorSubject<number>(0)
   public totalResults$ = this._totalResults$.asObservable()
 
   constructor() { }
@@ -30,43 +35,74 @@ export class FlightService {
         params: { isOW: filterBy.isOW }
       })
 
-      this._setFilterRanges(res.data)
-      const filteredFlights = this._filter(filterBy, res.data)
-      this._flights$.next(filteredFlights)
-
+      this._baseFlights$.next(this._setCustomPrice(res.data))
+      this._setFilterRanges(this._baseFlights$.value)
+      this._filter(filterBy, this._baseFlights$.value)
     } catch (err) {
       console.log(err)
     }
   }
 
-  private _filter(filterBy: FlightFilter, flights: Flight[]): Flight[] {
+  private _setCustomPrice(flights: Flight[]): Flight[] {
+    flights = flights.map(flight => {
+      // as said- even if just one direction is El Al flight--> plus $50 to the avg price
+      const isSomeElAl = flight.Segments.some(segment => {
+        return segment.Legs.every(leg => {
+          return leg.AirlineName === 'El Al '
+        })
+      })
+      if (isSomeElAl) flight.AveragePrice += 50
+      return flight
+    })
+
+    return flights
+  }
+
+  // Filter function
+  private _filter(filterBy: FlightFilter, flights: Flight[]) {
     let { companies, minPrice, maxPrice, stops, page, pageSize } = filterBy
-    const startIdx = page * pageSize
-    const endIdx = startIdx + pageSize
 
     flights = flights.filter(flight => {
       if (flight.AveragePrice > maxPrice || flight.AveragePrice < minPrice) return false
+      if (stops.length || companies.length) {
 
-      if (stops.length) {
-        // every to eliminate the rt's which maybe will be with some stops which are'nt acceptable in one of the segments
         return flight.Segments.every(segment => {
-          return stops.includes(segment.Legs.length - 1)
+          if (stops.length && companies.length) {
+            return stops.includes(segment.Legs.length - 1) && segment.Legs.every(leg => companies.includes(leg.AirlineName))
+          } else if (stops.length) {
+            return stops.includes(segment.Legs.length - 1)
+          } else if (companies.length) {
+            return segment.Legs.every(leg => companies.includes(leg.AirlineName))
+          }
+          return true
         })
       }
-      return true
-    })
-    // && filter by user comps choice
-    flights = flights.filter(flight => {
-      if (companies.length) {
-        return flight.Segments.every(segment => {
-          return segment.Legs.every(leg => companies.includes(leg.AirlineName))
-        })
-      }
+
       return true
     })
 
     this._totalResults$.next(flights.length)
-    return flights.slice(startIdx, endIdx)
+    this._filteredFlights$.next(flights)
+    this._flights$.next(flights.slice(0, pageSize))
+  }
+
+  // when change track pattern--> loadFlights with http req
+  public setFilterAndLoad(flightFilter: FlightFilter) {
+    this._flightFilter$.next(flightFilter)
+    this.loadFlights()
+  }
+  public setFilter(flightFilter: FlightFilter) {
+    this._flightFilter$.next(flightFilter)
+    this._filter(flightFilter, this._baseFlights$.value)
+  }
+  public setPage(filterBy: FlightFilter) {
+    const { page, pageSize } = filterBy
+    const startIdx = page * pageSize
+    const endIdx = startIdx + pageSize
+    const flights = this._filteredFlights$.value
+
+    this._flightFilter$.next(filterBy)
+    this._flights$.next(flights.slice(startIdx, endIdx))
   }
 
   private _setFilterRanges(flights: Flight[]): void {
@@ -95,15 +131,6 @@ export class FlightService {
 
     this._filterRanges$.next({ companies, minPrice, maxPrice, stops })
   }
-
-  public setFilter(flightFilter: FlightFilter) {
-    this._flightFilter$.next(flightFilter)
-    this.loadFlights()
-  }
 }
-
-
-
-
 
 
